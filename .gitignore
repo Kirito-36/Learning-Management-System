@@ -1,0 +1,8 @@
+build/
+*.db
+*.gcda
+*.gcno
+coverage*.html
+coverage*.css
+.vscode/
+.idea/
