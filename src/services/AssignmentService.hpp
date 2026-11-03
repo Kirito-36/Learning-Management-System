@@ -25,6 +25,13 @@ public:
     int grantExtension(const domain::User& lecturer, int assignmentId, int studentId,
                        domain::Timestamp newDueAt, const std::string& reason);
 
+    // Grants the same deadline extension to every active student enrolled in the assignment's course.
+    int grantClassExtension(const domain::User& lecturer, int assignmentId,
+                            domain::Timestamp newDueAt, const std::string& reason);
+
+    // Returns the effective deadline shown to a student in their assignment list.
+    domain::Timestamp effectiveDueAtForStudent(const domain::Assignment& assignment, int studentId) const;
+
     // Assignments visible to the user: a student's enrolled courses or a lecturer's taught courses.
     std::vector<domain::Assignment> listFor(const domain::User& user) const;
 
