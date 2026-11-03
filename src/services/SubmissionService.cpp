@@ -33,7 +33,7 @@ SubmitResult SubmissionService::submit(const User& student, int assignmentId, co
         throw RuleViolation("You have used all " + std::to_string(assignment->maxAttempts) + " attempts.");
     }
     if (!attempts.empty()) {
-        Submission& previous = attempts.back();
+        const Submission& previous = attempts.back();
         if (now > due) throw RuleViolation("Resubmission is only allowed before the deadline.");
         if (previous.status() != SubmissionStatus::Submitted && previous.status() != SubmissionStatus::UnderReview) {
             throw RuleViolation("Your previous attempt has already been marked and cannot be replaced.");
