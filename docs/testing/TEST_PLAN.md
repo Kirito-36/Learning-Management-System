@@ -40,6 +40,7 @@ Examples include:
 - User-role validation.
 - Deadline calculations and late-penalty strategies.
 - Assignment and submission operations.
+- Individual and whole-class extension rules, including active-enrolment scope and effective deadline display.
 - Extension and resubmission rules.
 - Marking and moderation operations.
 - Audit record creation.
@@ -117,7 +118,7 @@ Examples include:
 | Late penalty | At the start and end of each applicable penalty boundary |
 | Marks | Minimum, maximum and values immediately outside the permitted range |
 | Resubmissions | Before, at and beyond the permitted attempt limit |
-| Extensions | Original deadline, extended deadline and immediately after the extended deadline |
+| Extensions | Original deadline, individual extension, whole-class extension, a student with an existing later individual extension, and immediately after the effective deadline |
 
 The actual deadline, penalty and resubmission limits are taken from the approved SRS.
 
