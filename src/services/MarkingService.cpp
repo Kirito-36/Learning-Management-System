@@ -1,5 +1,6 @@
 #include "services/MarkingService.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <sstream>
 
@@ -92,10 +93,11 @@ std::vector<Submission> MarkingService::submissionsToMark(const User& lecturer, 
     if (!courses_.isLecturerOfCourse(assignment->courseId, lecturer.id())) {
         throw AccessDenied("You do not teach this course.");
     }
+
+    const auto submissions = submissions_.listByAssignment(assignmentId);
     std::vector<Submission> out;
-    for (const auto& s : submissions_.listByAssignment(assignmentId)) {
-        if (s.status() != SubmissionStatus::Superseded) out.push_back(s);
-    }
+    std::copy_if(submissions.begin(), submissions.end(), std::back_inserter(out),
+                 [](const Submission& s) { return s.status() != SubmissionStatus::Superseded; });
     return out;
 }
 
