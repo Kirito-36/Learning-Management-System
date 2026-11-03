@@ -17,6 +17,7 @@ This folder contains documentation for building, testing, deploying, using, and 
 ## Maintenance and change requests
 
 - [maintenance/CR1_ANALYSIS.md](maintenance/CR1_ANALYSIS.md) — CR1 classification, impact analysis and implementation summary.
+- [maintenance/REGRESSION_TEST_RESULTS.md](maintenance/REGRESSION_TEST_RESULTS.md) — CR1 regression test cases and execution record.
 - [design/CR1_DESIGN_UPDATE.md](design/CR1_DESIGN_UPDATE.md) — version 1.1 design updates for whole-class extensions.
 
 ## Deployment and releases
