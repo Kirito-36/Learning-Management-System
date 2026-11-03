@@ -99,7 +99,7 @@ Mark readMark(const Statement& st) {
     return m;
 }
 
-int insertedId(Database& db) { return static_cast<int>(db.lastInsertRowId()); }
+int insertedId(const Database& db) { return static_cast<int>(db.lastInsertRowId()); }
 
 }  // namespace
 
