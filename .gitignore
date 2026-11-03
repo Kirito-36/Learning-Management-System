@@ -1,8 +1,22 @@
+# Build directories
 build/
+build-*/
+cmake-build-*/
+
+# Database files
 *.db
+
+# Coverage files
 *.gcda
 *.gcno
 coverage*.html
 coverage*.css
+
+# Compiled files
+*.exe
+*.o
+*.obj
+
+# IDE settings
 .vscode/
 .idea/
