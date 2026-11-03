@@ -228,23 +228,24 @@ struct App {
         for (;;) {
             heading(std::string(roleName(actor.role())) + " menu");
             std::cout << "1. My courses\n2. My assignments\n3. Create assignment\n"
-                         "4. Grant student extension\n5. View submissions for assignment\n"
-                         "6. Mark submission\n";
+                         "4. Grant individual extension\n5. Grant whole-class extension\n"
+                         "6. View submissions for assignment\n7. Mark submission\n";
             if (actor.role() == Role::HeadOfDepartment)
-                std::cout << "7. Review pending marks\n8. Release approved marks\n";
-            std::cout << "9. View audit history\n0. Log out\n";
-            const int choice = readInt("Choose: ", 0, 9);
+                std::cout << "8. Review pending marks\n9. Release approved marks\n";
+            std::cout << "10. View audit history\n0. Log out\n";
+            const int choice = readInt("Choose: ", 0, 10);
             if (choice == 0) return;
             safely([&] {
                 if (choice == 1) showCourses(courses.coursesForLecturer(actor.id()));
                 else if (choice == 2) showAssignments(assignmentService.listFor(actor));
                 else if (choice == 3) createAssignment(actor);
                 else if (choice == 4) grantExtension(actor);
-                else if (choice == 5) viewSubmissions(actor);
-                else if (choice == 6) markSubmission(actor);
-                else if (choice == 7 && actor.role() == Role::HeadOfDepartment) reviewMarks(actor);
-                else if (choice == 8 && actor.role() == Role::HeadOfDepartment) releaseMarks(actor);
-                else if (choice == 9) viewAudit(actor);
+                else if (choice == 5) grantClassExtension(actor);
+                else if (choice == 6) viewSubmissions(actor);
+                else if (choice == 7) markSubmission(actor);
+                else if (choice == 8 && actor.role() == Role::HeadOfDepartment) reviewMarks(actor);
+                else if (choice == 9 && actor.role() == Role::HeadOfDepartment) releaseMarks(actor);
+                else if (choice == 10) viewAudit(actor);
                 else std::cout << "Choose one of the options shown.\n";
             });
         }
@@ -272,6 +273,27 @@ struct App {
         const std::string reason = prompt("Reason: ");
         const int id = assignmentService.grantExtension(actor, assignmentId, studentId, due, reason);
         std::cout << "Extension granted (ID " << id << ").\n";
+    }
+
+    void grantClassExtension(const domain::User& actor) {
+        showAssignments(assignmentService.listFor(actor));
+        const int assignmentId = readInt("Assignment ID: ", 1, 2147483647);
+        const auto due = readDateTime("New class due date/time");
+        const std::string reason = prompt("Reason: ");
+        const int count = assignmentService.grantClassExtension(actor, assignmentId, due, reason);
+        std::cout << "Class extension granted to " << count << " enrolled students.\n";
+    }
+
+    void showStudentAssignments(const domain::User& actor) {
+        const auto items = assignmentService.listFor(actor);
+        if (items.empty()) { std::cout << "No assignments found.\n"; return; }
+        for (const auto& a : items) {
+            std::cout << "#" << a.id << "  " << a.title << " (course " << a.courseId << ")\n"
+                      << "    Due: " << domain::formatDateTime(
+                             assignmentService.effectiveDueAtForStudent(a, actor.id()))
+                      << " | Max mark: " << a.maxMark << " | Attempts: " << a.maxAttempts << "\n";
+            if (!a.description.empty()) std::cout << "    " << a.description << '\n';
+        }
     }
 
     void viewSubmissions(const domain::User& actor) {
@@ -335,7 +357,7 @@ struct App {
             if (choice == 0) return;
             safely([&] {
                 if (choice == 1) showCourses(courses.coursesForStudent(actor.id()));
-                else if (choice == 2) showAssignments(assignmentService.listFor(actor));
+                else if (choice == 2) showStudentAssignments(actor);
                 else if (choice == 3) submitWork(actor);
                 else if (choice == 4) mySubmissions(actor);
                 else showResults(actor);
@@ -344,7 +366,7 @@ struct App {
     }
 
     void submitWork(const domain::User& actor) {
-        showAssignments(assignmentService.listFor(actor));
+        showStudentAssignments(actor);
         const int assignmentId = readInt("Assignment ID: ", 1, 2147483647);
         const std::string path = prompt("Submission file path: ");
         const auto result = submissionService.submit(actor, assignmentId, path);
