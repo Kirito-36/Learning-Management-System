@@ -14,6 +14,11 @@ This folder contains documentation for building, testing, deploying, using, and 
 - [`testing/COVERAGE_REPORT.md`](testing/COVERAGE_REPORT.md) — code coverage report and related details.
 - [`DEFECT_LOG.md`](DEFECT_LOG.md) — project defect log and related details.
 
+## Maintenance and change requests
+
+- [maintenance/CR1_ANALYSIS.md](maintenance/CR1_ANALYSIS.md) — CR1 classification, impact analysis and implementation summary.
+- [design/CR1_DESIGN_UPDATE.md](design/CR1_DESIGN_UPDATE.md) — version 1.1 design updates for whole-class extensions.
+
 ## Deployment and releases
 
 - [`deployment/INSTALLATION_GUIDE.md`](deployment/INSTALLATION_GUIDE.md) — installation instructions.
