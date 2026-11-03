@@ -26,6 +26,7 @@ public:
 
     virtual int enrol(int studentId, int courseId, domain::Timestamp at) = 0;
     virtual bool isEnrolled(int studentId, int courseId) const = 0;
+    virtual std::vector<int> studentIdsForCourse(int courseId) const = 0;
 };
 
 }  // namespace lms::data
