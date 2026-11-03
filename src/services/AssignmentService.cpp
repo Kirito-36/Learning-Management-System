@@ -72,6 +72,48 @@ int AssignmentService::grantExtension(const User& lecturer, int assignmentId, in
     return id;
 }
 
+int AssignmentService::grantClassExtension(const User& lecturer, int assignmentId, Timestamp newDueAt,
+                                                       const std::string& reason) {
+    requirePermission(lecturer, Permission::GrantExtension, "grant extensions");
+    const auto assignment = assignments_.findById(assignmentId);
+    if (!assignment) throw NotFound("Assignment not found.");
+    if (!courses_.isLecturerOfCourse(assignment->courseId, lecturer.id())) {
+        throw AccessDenied("You do not teach this course.");
+    }
+    requireText(reason, "Reason", 500);
+    const auto students = courses_.studentIdsForCourse(assignment->courseId);
+    if (students.empty()) throw RuleViolation("There are no active students enrolled in this course.");
+
+    // Validate every student's current deadline before writing, so the class update is all-or-nothing.
+    for (const int studentId : students) {
+        const Timestamp current = deadlines_.effectiveDueAt(*assignment, studentId);
+        if (newDueAt <= current) {
+            throw RuleViolation("The new class deadline must be later than every student's current deadline.");
+        }
+    }
+
+    auto scope = uow_.begin();
+    for (const int studentId : students) {
+        Extension e;
+        e.assignmentId = assignmentId;
+        e.studentId = studentId;
+        e.requestedDueAt = newDueAt;
+        e.reason = reason;
+        e.status = ExtensionStatus::Approved;
+        e.approvedBy = lecturer.id();
+        extensions_.add(e);
+    }
+    audit_.record(lecturer.id(), "GRANT_CLASS_EXTENSION", "assignment", assignmentId,
+                  formatDateTime(assignment->dueAt), formatDateTime(newDueAt),
+                  "whole class (" + std::to_string(students.size()) + " students): " + reason);
+    scope->commit();
+    return static_cast<int>(students.size());
+}
+
+Timestamp AssignmentService::effectiveDueAtForStudent(const Assignment& assignment, int studentId) const {
+    return deadlines_.effectiveDueAt(assignment, studentId);
+}
+
 std::vector<Assignment> AssignmentService::listFor(const User& user) const {
     std::vector<Course> courseList;
     if (user.role() == Role::Student) {
