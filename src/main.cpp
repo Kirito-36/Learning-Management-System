@@ -425,7 +425,11 @@ void run(const std::string& dbPath) {
 
     for (;;) {
         heading("Sign in");
-        const std::string username = prompt("Username (or Ctrl+D to exit): ");
+        const std::string username = prompt("Username (or 0 to exit): ");
+            if (username == "0"){
+                std::cout << "Goodbye!\n";
+                break;
+            }
         const std::string password = prompt("Password: ");
         try {
             auto user = auth.login(username, password);
