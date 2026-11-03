@@ -131,7 +131,7 @@ struct App {
     services::ResultsService& results;
     services::AuditService& audit;
 
-    template <typename Action> void safely(Action action) {
+    template <typename Action> static void safely(Action action) {
         try { action(); }
         catch (const domain::LmsError& e) { std::cout << "\nUnable to complete that action: " << e.what() << '\n'; }
         catch (const std::exception& e) { std::cout << "\nAn unexpected error occurred: " << e.what() << '\n'; }
