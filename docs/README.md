@@ -1,18 +1,35 @@
 # Documentation Index
 
-This folder contains guides and project standards for the Learning Management System.
+This folder contains documentation for building, testing, deploying, using, and maintaining the Learning Management System.
 
-## Files
+## Build and development
 
 - [`Build_guide.md`](Build_guide.md) — prerequisites and instructions for configuring, building, running, testing, and troubleshooting the application.
-- [`CODING_STANDARD.md`](CODING_STANDARD.md) — the project's C++ coding, layering, naming, security, and formatting conventions.
-- [`README.md`](README.md) — a quick overview of this documentation folder and its contents.
+- [`CODING_STANDARD.md`](CODING_STANDARD.md) — C++ coding, layering, naming, security, and formatting conventions.
 
-## Testing documentation
-
-The [`testing/`](testing/) folder contains test planning, execution results, and coverage information:
+## Testing and defects
 
 - [`testing/TEST_PLAN.md`](testing/TEST_PLAN.md) — planned test coverage and test cases.
 - [`testing/TEST_RESULTS.md`](testing/TEST_RESULTS.md) — recorded outcomes of test runs.
 - [`testing/COVERAGE_REPORT.md`](testing/COVERAGE_REPORT.md) — code coverage report and related details.
-- [`testing/DEFECT_LOG.md`](testing/DEFECT_LOG.md) — code defect log and related details.
+- [`DEFECT_LOG.md`](DEFECT_LOG.md) — project defect log and related details.
+
+## Deployment and releases
+
+- [`deployment/INSTALLATION_GUIDE.md`](deployment/INSTALLATION_GUIDE.md) — installation instructions.
+- [`deployment/DEPLOYMENT_DIAGRAM.md`](deployment/DEPLOYMENT_DIAGRAM.md) — deployment architecture diagram.
+- [`deployment/RELEASE_NOTES_v1.0.md`](deployment/RELEASE_NOTES_v1.0.md) — release notes for version 1.0.
+
+## Quality and project practices
+
+- [`quality/CODE_METRICS.md`](quality/CODE_METRICS.md) — code metrics.
+- [`quality/CODE_REVIEW.md`](quality/CODE_REVIEW.md) — code review guidance and information.
+- [`quality/CONFIGURATION_MANAGEMENT.md`](quality/CONFIGURATION_MANAGEMENT.md) — configuration management practices.
+- [`quality/STATIC_ANALYSIS.md`](quality/STATIC_ANALYSIS.md) — static analysis information.
+
+## User manuals
+
+- [`user-manuals/ADMINISTRATOR_MANUAL.md`](user-manuals/ADMINISTRATOR_MANUAL.md) — administrator instructions.
+- [`user-manuals/HOD_MANUAL.md`](user-manuals/HOD_MANUAL.md) — Head of Department instructions.
+- [`user-manuals/LECTURER_MANUAL.md`](user-manuals/LECTURER_MANUAL.md) — lecturer instructions.
+- [`user-manuals/STUDENT_MANUAL.md`](user-manuals/STUDENT_MANUAL.md) — student instructions.
