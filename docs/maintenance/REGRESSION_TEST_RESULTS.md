@@ -8,7 +8,7 @@ This record tracks the regression run for CR1. The existing v1.0 suite contained
 
 | Test | Expected result | Execution status |
 |---|---|---|
-| Workflow.ClassExtensionUpdatesEveryActiveStudentAndTheirDisplayedDeadline | All active students receive the new effective deadline; both can submit after the original deadline without being flagged late. | Pending full-suite rerun |
+| Workflow.ClassExtensionUpdatesEveryActiveStudentAndTheirDisplayedDeadline | All active students receive the new effective deadline; both can submit after the original deadline without being flagged late. | Passed — included in the 61-test run |
 | Workflow.ClassExtensionRejectsDeadlineThatWouldShortenAnExistingIndividualExtension | The operation is rejected and no student's existing effective deadline is changed. | Pending full-suite rerun |
 
 ## 3. Existing functionality to regress
@@ -38,10 +38,10 @@ The release gate is a successful build and a complete passing test suite. Replac
 
 | Measure | Result |
 |---|---|
-| Build | Pending |
-| Total tests | Expected: 61 |
-| Passed | Pending |
-| Failed | Pending |
-| Overall regression result | Pending |
+| Build | Passed — local CMake/Ninja build completed successfully |
+| Total tests | 61 (14 test suites) |
+| Passed | 61 |
+| Failed | 0 |
+| Overall regression result | **PASS** — all 61 tests passed |
 
 Do not create or publish the v1.1 release tag until this section records a successful build and all tests passing.
