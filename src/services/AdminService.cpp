@@ -1,5 +1,6 @@
 #include "services/AdminService.hpp"
 
+#include <algorithm>
 #include <cctype>
 
 #include "services/Guards.hpp"
@@ -11,10 +12,11 @@ namespace {
 
 void validateUsername(const std::string& u) {
     if (u.size() < 3 || u.size() > 32) throw ValidationError("Username must be 3 to 32 characters.");
-    for (unsigned char c : u) {
-        if (!(std::isalnum(c) || c == '.' || c == '_' || c == '-')) {
-            throw ValidationError("Username may contain only letters, digits, '.', '_' and '-'.");
-        }
+    const bool containsInvalidCharacter = std::any_of(u.begin(), u.end(), [](unsigned char c) {
+        return !(std::isalnum(c) || c == '.' || c == '_' || c == '-');
+    });
+    if (containsInvalidCharacter) {
+        throw ValidationError("Username may contain only letters, digits, '.', '_' and '-'.");
     }
 }
 
