@@ -42,6 +42,7 @@ public:
     bool isLecturerOfCourse(int courseId, int lecturerId) const override;
     int enrol(int studentId, int courseId, domain::Timestamp at) override;
     bool isEnrolled(int studentId, int courseId) const override;
+    std::vector<int> studentIdsForCourse(int courseId) const override;
 
 private:
     Database& db_;
