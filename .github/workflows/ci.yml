@@ -1,1 +1,33 @@
+name: CI
+on:
+  push:
+  pull_request:
 
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ libsqlite3-dev libsodium-dev pkg-config cppcheck gcovr
+      - name: Configure (coverage on, warnings as errors)
+        run: cmake -S . -B build -DLMS_ENABLE_COVERAGE=ON -DLMS_WARNINGS_AS_ERRORS=ON -DCMAKE_BUILD_TYPE=Debug
+      - name: Build
+        run: cmake --build build -j
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
+      - name: Coverage report (business-logic layer)
+        run: |
+          gcovr -r . --filter 'src/domain/' --filter 'src/services/' \
+                --print-summary --txt coverage.txt --html-details coverage.html
+          cat coverage.txt
+      - name: Static analysis (cppcheck)
+        run: cppcheck --enable=warning,style,performance,portability --std=c++17 --error-exitcode=1 --inline-suppr -I src src 2> cppcheck.txt || (cat cppcheck.txt; exit 1)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-reports
+          path: |
+            coverage.txt
+            coverage*.html
+            cppcheck.txt
