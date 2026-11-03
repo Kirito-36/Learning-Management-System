@@ -233,7 +233,7 @@ struct App {
             if (actor.role() == Role::HeadOfDepartment)
                 std::cout << "7. Review pending marks\n8. Release approved marks\n";
             std::cout << "9. View audit history\n0. Log out\n";
-            const int choice = readInt("Choose: ", 0, actor.role() == Role::HeadOfDepartment ? 9 : 9);
+            const int choice = readInt("Choose: ", 0, 9);
             if (choice == 0) return;
             safely([&] {
                 if (choice == 1) showCourses(courses.coursesForLecturer(actor.id()));
