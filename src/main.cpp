@@ -425,8 +425,8 @@ void run(const std::string& dbPath) {
 
     for (;;) {
         heading("Sign in");
-        const std::string username = prompt("Username (or 0 to exit): ");
-            if (username == "0"){
+        const std::string username = prompt("Username (enter 0 to exit): ");
+            if (username == "0") {
                 std::cout << "Goodbye!\n";
                 break;
             }
