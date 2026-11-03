@@ -52,18 +52,65 @@ AssignmentService ..> Extension : creates one per active student
 App --> AssignmentService
 @enduml
 
-## 3. Whole-class extension interaction
+## 3. Updated use-case diagram
 
-1. Lecturer chooses the whole-class extension menu option and selects an assignment.
-2. AssignmentService verifies the lecturer's permission and ownership of the assignment's course.
-3. The service obtains all active student IDs through ICourseRepository::studentIdsForCourse.
-4. The service checks that the new deadline is later than every student's current effective deadline.
-5. If any check fails, the operation stops before writing any extension rows.
-6. Otherwise, one transaction inserts an approved Extension row for each active student.
-7. One GRANT_CLASS_EXTENSION audit event records the assignment, new date, student count and reason.
-8. The service commits and returns the number of students extended.
+@startuml
+left to right direction
+actor Lecturer
+actor "Head of Department" as HOD
+actor Student
+rectangle LMS {
+  usecase "Grant individual extension" as U1
+  usecase "Grant whole-class extension" as U2
+  usecase "View assignments and effective deadlines" as U3
+}
+Lecturer --> U1
+Lecturer --> U2
+HOD --> U1
+HOD --> U2
+Student --> U3
+@enduml
 
-## 4. Data model impact
+## 4. Whole-class extension sequence diagram
+
+@startuml
+actor Lecturer
+participant App
+participant AssignmentService
+participant ICourseRepository
+participant DeadlinePolicy
+participant IExtensionRepository
+participant IUnitOfWork
+participant AuditService
+
+Lecturer -> App: Choose assignment, new deadline and reason
+App -> AssignmentService: grantClassExtension(...)
+AssignmentService -> AssignmentService: Check permission and assignment
+AssignmentService -> ICourseRepository: isLecturerOfCourse(...)
+ICourseRepository --> AssignmentService: authorised
+AssignmentService -> ICourseRepository: studentIdsForCourse(courseId)
+ICourseRepository --> AssignmentService: active student IDs
+loop for each active student
+  AssignmentService -> DeadlinePolicy: effectiveDueAt(assignment, studentId)
+  DeadlinePolicy -> IExtensionRepository: latestApprovedDueAt(...)
+  IExtensionRepository --> DeadlinePolicy: current approved deadline
+  DeadlinePolicy --> AssignmentService: effective deadline
+end
+alt invalid deadline for any student
+  AssignmentService --> App: RuleViolation (no records written)
+else all deadlines valid
+  AssignmentService -> IUnitOfWork: begin transaction
+  loop for each active student
+    AssignmentService -> IExtensionRepository: add approved Extension
+  end
+  AssignmentService -> AuditService: record GRANT_CLASS_EXTENSION
+  AssignmentService -> IUnitOfWork: commit
+  AssignmentService --> App: number of students extended
+end
+App --> Lecturer: Display confirmation
+@enduml
+
+## 5. Data model impact
 
 No schema change is required. Existing relationships remain:
 
@@ -74,6 +121,40 @@ No schema change is required. Existing relationships remain:
 - users 1 — many extensions (as the approving lecturer)
 
 A whole-class extension is stored as multiple rows in the existing extensions table, one for each active student. The enrolments table is queried to determine the class membership. The audit_log table stores one summary event for the class-level action.
+
+### Relevant entity relationship diagram
+
+@startuml
+entity courses {
+  * course_id : INTEGER <<PK>>
+}
+entity assignments {
+  * assignment_id : INTEGER <<PK>>
+  --
+  course_id : INTEGER <<FK>>
+  due_at : INTEGER
+}
+entity enrolments {
+  * enrolment_id : INTEGER <<PK>>
+  --
+  student_id : INTEGER <<FK>>
+  course_id : INTEGER <<FK>>
+  status : TEXT
+}
+entity extensions {
+  * extension_id : INTEGER <<PK>>
+  --
+  assignment_id : INTEGER <<FK>>
+  student_id : INTEGER <<FK>>
+  requested_due_at : INTEGER
+  reason : TEXT
+  status : TEXT
+  approved_by : INTEGER <<FK>>
+}
+courses ||--o{ assignments
+courses ||--o{ enrolments
+assignments ||--o{ extensions
+@enduml
 
 ## 5. Deadline display
 
