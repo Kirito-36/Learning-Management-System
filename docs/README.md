@@ -15,3 +15,4 @@ The [`testing/`](testing/) folder contains test planning, execution results, and
 - [`testing/TEST_PLAN.md`](testing/TEST_PLAN.md) — planned test coverage and test cases.
 - [`testing/TEST_RESULTS.md`](testing/TEST_RESULTS.md) — recorded outcomes of test runs.
 - [`testing/COVERAGE_REPORT.md`](testing/COVERAGE_REPORT.md) — code coverage report and related details.
+- [`testing/DEFECT_LOG.md`](testing/DEFECT_LOG.md) — code defect log and related details.
