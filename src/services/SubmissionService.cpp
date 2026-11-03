@@ -42,7 +42,7 @@ SubmitResult SubmissionService::submit(const User& student, int assignmentId, co
 
     auto scope = uow_.begin();
     if (!attempts.empty()) {
-        Submission& previous = attempts.back();
+        auto previous = attempts.back();
         previous.transitionTo(SubmissionStatus::Superseded);
         submissions_.save(previous);
     }
