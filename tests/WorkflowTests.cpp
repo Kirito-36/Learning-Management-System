@@ -109,6 +109,37 @@ TEST(Workflow, ExtensionShiftsTheStudentsDeadline) {
     EXPECT_TRUE(w.submissionSvc.submit(*w.student2, w.assignmentId, "b.pdf").lateness.isLate);  // no extension
 }
 
+TEST(Workflow, ClassExtensionUpdatesEveryActiveStudentAndTheirDisplayedDeadline) {
+    World w;
+    const Timestamp newDue = w.due + 2 * World::kDay;
+
+    EXPECT_EQ(w.assignmentSvc.grantClassExtension(*w.lecturer, w.assignmentId, newDue, "School closure"), 2);
+
+    const auto assignment = w.assignments.findById(w.assignmentId);
+    ASSERT_TRUE(assignment.has_value());
+    EXPECT_EQ(w.assignmentSvc.effectiveDueAtForStudent(*assignment, w.student->id()), newDue);
+    EXPECT_EQ(w.assignmentSvc.effectiveDueAtForStudent(*assignment, w.student2->id()), newDue);
+
+    w.clock.t = w.due + World::kDay;
+    EXPECT_FALSE(w.submissionSvc.submit(*w.student, w.assignmentId, "student1.pdf").lateness.isLate);
+    EXPECT_FALSE(w.submissionSvc.submit(*w.student2, w.assignmentId, "student2.pdf").lateness.isLate);
+}
+
+TEST(Workflow, ClassExtensionRejectsDeadlineThatWouldShortenAnExistingIndividualExtension) {
+    World w;
+    w.assignmentSvc.grantExtension(*w.lecturer, w.assignmentId, w.student->id(),
+                                   w.due + 3 * World::kDay, "Individual arrangement");
+    const auto assignment = w.assignments.findById(w.assignmentId);
+    ASSERT_TRUE(assignment.has_value());
+
+    EXPECT_THROW(w.assignmentSvc.grantClassExtension(*w.lecturer, w.assignmentId,
+                                                     w.due + 2 * World::kDay, "Class extension"),
+                 RuleViolation);
+    EXPECT_EQ(w.assignmentSvc.effectiveDueAtForStudent(*assignment, w.student->id()),
+              w.due + 3 * World::kDay);
+    EXPECT_EQ(w.assignmentSvc.effectiveDueAtForStudent(*assignment, w.student2->id()), w.due);
+}
+
 TEST(Workflow, ExtensionMustMoveTheDeadlineLaterAndNeedsAReason) {
     World w;
     EXPECT_THROW(w.assignmentSvc.grantExtension(*w.lecturer, w.assignmentId, w.student->id(), w.due, "same"),
