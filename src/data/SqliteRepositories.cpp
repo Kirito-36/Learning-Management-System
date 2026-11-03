@@ -241,6 +241,13 @@ bool SqliteCourseRepository::isEnrolled(int studentId, int courseId) const {
     return st.step();
 }
 
+std::vector<int> SqliteCourseRepository::studentIdsForCourse(int courseId) const {
+    auto st = db_.prepare("SELECT student_id FROM enrolments WHERE course_id = ? AND status = 'ACTIVE' "
+                          "ORDER BY student_id");
+    st.bind(1, courseId);
+    return collect<int>(st, [](const Statement& row) { return intAt(row, 0); });
+}
+
 // ---- assignments and extensions ---------------------------------------------------------------
 
 int SqliteAssignmentRepository::add(const Assignment& a) {
