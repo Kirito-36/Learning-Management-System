@@ -56,6 +56,7 @@ cmake --build build-ninja
 - **[Student manual](docs/user-manuals/STUDENT_MANUAL.md)**
 - **[Lecturer manual](docs/user-manuals/LECTURER_MANUAL.md)**
 - **[Administrator manual](docs/user-manuals/ADMINISTRATOR_MANUAL.md)**
+- **[HOD_manual](docs/user-manuals/HOD_MANUAL.md)**
 
 ---
 
